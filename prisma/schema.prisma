@@ -29,3 +29,48 @@ model Post {
   authorId  Int
   author    User    @relation(fields: [authorId], references: [id])
 }
+
+model DiveCompany {
+  id       String    @id @default(cuid())
+  name     String
+  email    String
+  phone    String
+  bookings Booking[]
+}
+
+model Charter {
+  id        String    @id @default(cuid())
+  date      DateTime
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  diveCompanyId String
+  charterId     String
+  status        BookingStatus @default(PENDING)
+  guests        Guest[]
+
+  // Relations
+  diveCompany   DiveCompany   @relation(fields: [diveCompanyId], references: [id])
+  charter       Charter       @relation(fields: [charterId], references: [id])
+}
+
+model Guest {
+  id        String  @id @default(cuid())
+  bookingId String
+  name      String
+  email     String
+  phone     String
+
+  // Relation
+  booking   Booking @relation(fields: [bookingId], references: [id])
+}
+
+enum BookingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
